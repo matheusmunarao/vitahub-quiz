@@ -1,3 +1,8 @@
+import axios from 'axios';
+
+const API_URL = 'https://aimlapi.com/api/v1/generate';
+const API_TOKEN = '9a4f0e1f292f4205bbbeae04c948e6e9';
+
 export const generateAIPrompt = (answers) => {
   return `Gere um plano alimentar personalizado para uma pessoa com as seguintes características:
   
@@ -21,48 +26,25 @@ export const generateAIPrompt = (answers) => {
 };
 
 export const fetchAIPlan = async (prompt) => {
-  // Aqui você implementaria a chamada para a API de IA
-  // Por enquanto, vamos retornar um plano de exemplo
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`
-        Plano Alimentar Personalizado
+  try {
+    const response = await axios.post(API_URL, {
+      prompt: prompt,
+      max_tokens: 1000,
+      temperature: 0.7,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_TOKEN}`
+      }
+    });
 
-        Café da manhã:
-        - Omelete de claras com espinafre e tomate
-        - 1 fatia de pão integral
-        - 1 porção de frutas vermelhas
-
-        Lanche da manhã:
-        - Iogurte grego com chia e amêndoas
-
-        Almoço:
-        - Peito de frango grelhado
-        - Quinoa
-        - Salada de folhas verdes variadas
-        - Azeite extra virgem
-
-        Lanche da tarde:
-        - 1 maçã
-        - 1 punhado de castanhas
-
-        Jantar:
-        - Salmão assado
-        - Brócolis no vapor
-        - Batata doce assada
-
-        Recomendação de ingestão diária:
-        - Calorias: 1800-2000 kcal
-        - Proteínas: 100-120g
-        - Carboidratos: 200-250g
-        - Gorduras: 50-60g
-
-        Substituições:
-        - Se vegetariano/vegano, substitua as proteínas animais por tofu, tempeh ou leguminosas
-        - Se intolerante à lactose, use alternativas vegetais para o iogurte
-
-        Lembre-se de beber bastante água ao longo do dia e ajustar as porções conforme necessário.
-      `);
-    }, 2000);
-  });
+    if (response.data && response.data.choices && response.data.choices.length > 0) {
+      return response.data.choices[0].text.trim();
+    } else {
+      throw new Error('Resposta da API não contém dados válidos');
+    }
+  } catch (error) {
+    console.error('Erro ao buscar plano da IA:', error);
+    throw error;
+  }
 };
