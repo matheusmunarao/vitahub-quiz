@@ -25,7 +25,7 @@ export const generateAIPrompt = (answers) => {
 export const fetchAIPlan = async (prompt) => {
   const apiKey = appConfig.OPENAI_API_KEY;
   if (!apiKey) {
-    throw new Error('Token da API OpenAI não encontrado. Verifique suas variáveis de ambiente.');
+    throw new Error('OpenAI API key not found. Please check your environment variables.');
   }
 
   try {
@@ -44,13 +44,13 @@ export const fetchAIPlan = async (prompt) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Erro: ${response.status} ${response.statusText}`);
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
     }
 
     const result = await response.json();
     return result.choices[0].text.trim();
   } catch (error) {
-    console.error('Erro ao buscar plano da IA:', error.message);
+    console.error('Error fetching AI plan:', error.message);
     throw error;
   }
 };
