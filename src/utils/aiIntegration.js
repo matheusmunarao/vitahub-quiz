@@ -26,6 +26,9 @@ export const generateAIPrompt = (answers) => {
 };
 
 export const fetchAIPlan = async (prompt) => {
+  console.log('Iniciando requisição à API...');
+  console.log('Prompt:', prompt);
+  
   try {
     const response = await axios.post(API_URL, {
       prompt: prompt,
@@ -38,13 +41,16 @@ export const fetchAIPlan = async (prompt) => {
       }
     });
 
+    console.log('Resposta da API:', response.data);
+
     if (response.data && response.data.choices && response.data.choices.length > 0) {
       return response.data.choices[0].text.trim();
     } else {
+      console.error('Resposta da API não contém dados válidos:', response.data);
       throw new Error('Resposta da API não contém dados válidos');
     }
   } catch (error) {
-    console.error('Erro ao buscar plano da IA:', error);
+    console.error('Erro detalhado ao buscar plano da IA:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
