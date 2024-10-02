@@ -26,6 +26,7 @@ const PlanDisplay = () => {
         setPlan(aiPlan);
       } catch (error) {
         setError(`Erro ao gerar plano: ${error.message}`);
+        console.error('Detalhes do erro:', error);
       } finally {
         setLoading(false);
       }

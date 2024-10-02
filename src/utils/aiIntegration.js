@@ -26,7 +26,7 @@ export const generateAIPrompt = (answers) => {
 export const fetchAIPlan = async (prompt) => {
   const token = appConfig.OPENAI_API_KEY;
   if (!token) {
-    throw new Error('Token da API OpenAI não encontrado');
+    throw new Error('Token da API OpenAI não encontrado. Verifique suas variáveis de ambiente.');
   }
 
   try {
@@ -48,7 +48,7 @@ export const fetchAIPlan = async (prompt) => {
       throw new Error('Resposta da API não contém dados válidos');
     }
   } catch (error) {
-    console.error('Erro ao buscar plano da IA:', error.message);
+    console.error('Erro ao buscar plano da IA:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
