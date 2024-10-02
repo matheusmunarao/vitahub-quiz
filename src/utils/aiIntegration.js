@@ -1,4 +1,3 @@
-import axios from 'axios';
 import appConfig from '../config/appConfig';
 
 export const generateAIPrompt = (answers) => {
@@ -24,31 +23,34 @@ export const generateAIPrompt = (answers) => {
 };
 
 export const fetchAIPlan = async (prompt) => {
-  const token = appConfig.OPENAI_API_KEY;
-  if (!token) {
+  const apiKey = appConfig.OPENAI_API_KEY;
+  if (!apiKey) {
     throw new Error('Token da API OpenAI não encontrado. Verifique suas variáveis de ambiente.');
   }
 
   try {
-    const response = await axios.post(appConfig.OPENAI_API_URL, {
-      model: appConfig.MODEL,
-      messages: [{ role: "user", content: prompt }],
-      temperature: appConfig.TEMPERATURE,
-      max_tokens: appConfig.MAX_TOKENS
-    }, {
+    const response = await fetch("https://api.openai.com/v1/completions", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        prompt: prompt,
+        max_tokens: 500,
+        temperature: 0.7,
+      }),
     });
 
-    if (response.data && response.data.choices && response.data.choices.length > 0) {
-      return response.data.choices[0].message.content.trim();
-    } else {
-      throw new Error('Resposta da API não contém dados válidos');
+    if (!response.ok) {
+      throw new Error(`Erro: ${response.status} ${response.statusText}`);
     }
+
+    const result = await response.json();
+    return result.choices[0].text.trim();
   } catch (error) {
-    console.error('Erro ao buscar plano da IA:', error.response ? error.response.data : error.message);
+    console.error('Erro ao buscar plano da IA:', error.message);
     throw error;
   }
 };
