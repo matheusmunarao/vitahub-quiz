@@ -3,6 +3,7 @@ const appConfig = {
   MAX_TOKENS: 1000,
   TEMPERATURE: 0.7,
   MODEL: 'gpt-3.5-turbo',
+  OPENAI_API_KEY: import.meta.env.VITE_REACT_APP_OPENAI_API_KEY || '',
 };
 
 export default appConfig;

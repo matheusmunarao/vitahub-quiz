@@ -1,10 +1,6 @@
 import axios from 'axios';
 import appConfig from '../config/appConfig';
 
-const getOpenAIToken = () => {
-  return process.env.REACT_APP_OPENAI_API_KEY || '';
-};
-
 export const generateAIPrompt = (answers) => {
   return `Gere um plano alimentar personalizado para uma pessoa com as seguintes características:
   
@@ -28,7 +24,7 @@ export const generateAIPrompt = (answers) => {
 };
 
 export const fetchAIPlan = async (prompt) => {
-  const token = getOpenAIToken();
+  const token = appConfig.OPENAI_API_KEY;
   if (!token) {
     throw new Error('Token da API OpenAI não encontrado');
   }
