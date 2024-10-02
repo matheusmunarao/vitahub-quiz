@@ -32,7 +32,10 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Set up the OpenAI API key as an environment variable
+export REACT_APP_OPENAI_API_KEY=your_openai_api_key_here
+
+# Step 5: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
@@ -68,3 +71,20 @@ Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/e08
 ## I want to use a custom domain - is that possible?
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+
+## Important: Setting up the OpenAI API Key
+
+To use this application, you need to set up your OpenAI API key as an environment variable. This is crucial for the AI integration to work properly and securely.
+
+1. Create a `.env` file in the root directory of your project.
+2. Add the following line to the `.env` file:
+
+   ```
+   REACT_APP_OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+   Replace `your_openai_api_key_here` with your actual OpenAI API key.
+
+3. Make sure to add `.env` to your `.gitignore` file to prevent accidentally committing your API key to version control.
+
+Remember, never share your API key publicly or commit it to your repository. Always use environment variables or a secure secret management system to handle sensitive information like API keys.

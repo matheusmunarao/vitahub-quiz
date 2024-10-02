@@ -1,7 +1,12 @@
 import axios from 'axios';
 
-const API_URL = 'https://aimlapi.com/api/v1/generate';
-const API_TOKEN = '9a4f0e1f292f4205bbbeae04c948e6e9';
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+
+// Função para obter o token de forma segura
+const getOpenAIToken = () => {
+  // Em um ambiente de produção, isso deve vir de variáveis de ambiente ou um serviço de gerenciamento de segredos
+  return process.env.REACT_APP_OPENAI_API_KEY || '';
+};
 
 export const generateAIPrompt = (answers) => {
   return `Gere um plano alimentar personalizado para uma pessoa com as seguintes características:
@@ -26,31 +31,31 @@ export const generateAIPrompt = (answers) => {
 };
 
 export const fetchAIPlan = async (prompt) => {
-  console.log('Iniciando requisição à API...');
-  console.log('Prompt:', prompt);
-  
+  const token = getOpenAIToken();
+  if (!token) {
+    throw new Error('Token da API OpenAI não encontrado');
+  }
+
   try {
-    const response = await axios.post(API_URL, {
-      prompt: prompt,
-      max_tokens: 1000,
+    const response = await axios.post(OPENAI_API_URL, {
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
+      max_tokens: 1000
     }, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_TOKEN}`
+        'Authorization': `Bearer ${token}`
       }
     });
 
-    console.log('Resposta da API:', response.data);
-
     if (response.data && response.data.choices && response.data.choices.length > 0) {
-      return response.data.choices[0].text.trim();
+      return response.data.choices[0].message.content.trim();
     } else {
-      console.error('Resposta da API não contém dados válidos:', response.data);
       throw new Error('Resposta da API não contém dados válidos');
     }
   } catch (error) {
-    console.error('Erro detalhado ao buscar plano da IA:', error.response ? error.response.data : error.message);
+    console.error('Erro ao buscar plano da IA:', error.message);
     throw error;
   }
 };
