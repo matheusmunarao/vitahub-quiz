@@ -44,7 +44,8 @@ export const fetchAIPlan = async (prompt) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json();
+      throw new Error(`API Error: ${errorData.error.message}`);
     }
 
     const result = await response.json();
