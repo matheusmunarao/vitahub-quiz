@@ -1,10 +1,7 @@
 import axios from 'axios';
+import appConfig from '../config/appConfig';
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
-
-// Função para obter o token de forma segura
 const getOpenAIToken = () => {
-  // Em um ambiente de produção, isso deve vir de variáveis de ambiente ou um serviço de gerenciamento de segredos
   return process.env.REACT_APP_OPENAI_API_KEY || '';
 };
 
@@ -37,11 +34,11 @@ export const fetchAIPlan = async (prompt) => {
   }
 
   try {
-    const response = await axios.post(OPENAI_API_URL, {
-      model: "gpt-3.5-turbo",
+    const response = await axios.post(appConfig.OPENAI_API_URL, {
+      model: appConfig.MODEL,
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 1000
+      temperature: appConfig.TEMPERATURE,
+      max_tokens: appConfig.MAX_TOKENS
     }, {
       headers: {
         'Content-Type': 'application/json',
