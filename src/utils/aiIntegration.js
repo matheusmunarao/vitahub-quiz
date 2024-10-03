@@ -58,9 +58,10 @@ export const fetchAIPlan = async (answers) => {
     const result = await response.json();
     console.log('Resposta da API:', JSON.stringify(result, null, 2));
 
-    // Verifica se a resposta contém a propriedade 'content'
     if (result && result.content) {
       return result.content;
+    } else if (result && result.error) {
+      throw new Error(`Erro do Worker: ${result.error}`);
     } else {
       console.error('Formato de resposta inválido:', result);
       throw new Error('Formato de resposta inválido da API');
