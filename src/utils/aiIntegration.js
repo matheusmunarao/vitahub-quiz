@@ -43,6 +43,7 @@ export const fetchAIPlan = async (answers) => {
   const prompt = generateAIPrompt(answers);
 
   try {
+    console.log('Fetching from Cloudflare Worker URL:', cloudflareWorkerUrl);
     const response = await fetch(cloudflareWorkerUrl, {
       method: 'POST',
       headers: {
@@ -53,13 +54,15 @@ export const fetchAIPlan = async (answers) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`API Error: ${errorData.error || 'Unknown error'}`);
+      console.error('API Error:', errorData);
+      throw new Error(`API Error: ${errorData.error || response.statusText}`);
     }
 
     const result = await response.json();
+    console.log('API Response:', result);
     return result.choices[0].message.content;
   } catch (error) {
-    console.error('Erro ao buscar o plano alimentar da IA:', error.message);
+    console.error('Erro ao buscar o plano alimentar da IA:', error);
     throw new Error(`Erro ao buscar o plano alimentar: ${error.message}`);
   }
 };
