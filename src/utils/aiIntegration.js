@@ -1,5 +1,11 @@
-import axios from 'axios';
+import OpenAI from "openai";
 import appConfig from '../config/appConfig';
+
+// Inicializando o cliente OpenAI com a chave da API e as variáveis de organização e projeto
+const openai = new OpenAI({
+  apiKey: appConfig.OPENAI_API_KEY,
+  organization: appConfig.OPENAI_ORGANIZATION_ID,
+});
 
 // Função para gerar o prompt com base nas respostas do usuário
 export const generateAIPrompt = (answers) => {
@@ -27,30 +33,23 @@ export const generateAIPrompt = (answers) => {
 // Função para fazer a chamada à API da OpenAI e obter o plano alimentar
 export const fetchAIPlan = async (prompt) => {
   try {
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 1000,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${appConfig.OPENAI_API_KEY}`,
-          'OpenAI-Organization': appConfig.OPENAI_ORGANIZATION_ID,
-          'OpenAI-Project': appConfig.OPENAI_PROJECT_ID,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    // Faz a requisição para a API de chat completions da OpenAI
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 500,
+      temperature: 0.7,
+    });
 
-    if (!response.data || !response.data.choices || response.data.choices.length === 0) {
+    // Verifica se a resposta foi bem-sucedida
+    if (!response || !response.choices || response.choices.length === 0) {
       throw new Error('API response is empty or invalid.');
     }
 
-    return response.data.choices[0].message.content.trim();
+    // Retorna o texto gerado pela IA, removendo espaços desnecessários
+    return response.choices[0].message.content.trim();
   } catch (error) {
+    // Tratamento de erro: lança uma exceção caso haja falha na requisição
     console.error('Erro ao buscar o plano alimentar da IA:', error.message);
     throw new Error(`Erro ao buscar o plano alimentar: ${error.message}`);
   }
