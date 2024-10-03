@@ -34,17 +34,15 @@ export const generateAIPrompt = (answers) => {
 };
 
 export const fetchAIPlan = async (answers) => {
-  const cloudflareWorkerUrl = appConfig.CLOUDFLARE_WORKER_URL;
+  const cloudflareWorkerUrl = appConfig.CLOUDFLARE_URL;
 
   if (!cloudflareWorkerUrl) {
     throw new Error('Cloudflare Worker URL not found. Please check your environment variables.');
   }
 
-  // Gerar o prompt com base nas respostas do usuário
   const prompt = generateAIPrompt(answers);
 
   try {
-    // Fazer a requisição para o Worker da Cloudflare
     const response = await fetch(cloudflareWorkerUrl, {
       method: 'POST',
       headers: {
@@ -53,17 +51,13 @@ export const fetchAIPlan = async (answers) => {
       body: JSON.stringify(prompt),
     });
 
-    // Verifica se a resposta foi bem-sucedida
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`API Error: ${errorData.error.message}`);
+      throw new Error(`API Error: ${errorData.error || 'Unknown error'}`);
     }
 
-    // Pega o JSON da resposta
     const result = await response.json();
-
-    // Retorna a resposta da IA do primeiro item (você pode ajustar conforme o retorno)
-    return result[0].response;
+    return result.choices[0].message.content;
   } catch (error) {
     console.error('Erro ao buscar o plano alimentar da IA:', error.message);
     throw new Error(`Erro ao buscar o plano alimentar: ${error.message}`);
