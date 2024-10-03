@@ -25,8 +25,8 @@ const PlanDisplay = () => {
         const aiPlan = await fetchAIPlan(userData.answers);
         setPlan(aiPlan);
       } catch (error) {
+        console.error('Error in PlanDisplay:', error);
         setError(error.message);
-        console.error('Error details:', error);
       } finally {
         setLoading(false);
       }
@@ -38,7 +38,7 @@ const PlanDisplay = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-green-100 to-blue-100 flex flex-col items-center justify-center">
-        <p className="text-2xl font-bold text-green-600">Gerando seu plano personalizado...</p>
+        <p className="text-2xl font-bold text-green-600">Generating your personalized plan...</p>
       </div>
     );
   }
@@ -46,22 +46,26 @@ const PlanDisplay = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-blue-100 p-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">Seu Plano Alimentar Personalizado</h1>
+        <h1 className="text-3xl font-bold text-green-600 mb-6">Your Personalized Meal Plan</h1>
         {error ? (
           <Alert variant="destructive">
-            <AlertTitle>Erro</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              {error}
+              <br />
+              Please try again later or contact support if the problem persists.
+            </AlertDescription>
           </Alert>
         ) : (
           <pre className="whitespace-pre-wrap font-sans text-gray-700">{plan}</pre>
         )}
         <div className="mt-8 flex justify-between">
           <Button onClick={() => navigate('/')} className="bg-green-500 hover:bg-green-600">
-            Voltar para o Início
+            Back to Home
           </Button>
           {!error && (
             <Button onClick={() => window.print()} className="bg-blue-500 hover:bg-blue-600">
-              Imprimir Plano
+              Print Plan
             </Button>
           )}
         </div>
