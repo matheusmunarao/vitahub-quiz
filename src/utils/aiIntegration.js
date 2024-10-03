@@ -58,11 +58,13 @@ export const fetchAIPlan = async (answers) => {
     const result = await response.json();
     console.log('Resposta da API:', JSON.stringify(result, null, 2));
 
-    if (!result.tasks || result.tasks.length === 0 || !result.tasks[0].response) {
+    // Verifica se a resposta contém a propriedade 'content'
+    if (result && result.content) {
+      return result.content;
+    } else {
+      console.error('Formato de resposta inválido:', result);
       throw new Error('Formato de resposta inválido da API');
     }
-
-    return result.tasks[0].response;
   } catch (error) {
     console.error('Erro ao buscar plano alimentar:', error);
     throw new Error(`Erro ao buscar plano alimentar: ${error.message}`);
