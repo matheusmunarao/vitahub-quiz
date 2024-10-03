@@ -25,8 +25,8 @@ const PlanDisplay = () => {
         const aiPlan = await fetchAIPlan(userData.prompt);
         setPlan(aiPlan);
       } catch (error) {
-        setError(`Erro ao gerar plano: ${error.message}`);
-        console.error('Detalhes do erro:', error);
+        setError(error.message);
+        console.error('Error details:', error);
       } finally {
         setLoading(false);
       }

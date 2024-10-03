@@ -37,7 +37,8 @@ export const fetchAIPlan = async (answers) => {
   const cloudflareWorkerUrl = appConfig.CLOUDFLARE_URL;
 
   if (!cloudflareWorkerUrl) {
-    throw new Error('Cloudflare Worker URL not found. Please check your environment variables.');
+    console.error('Cloudflare Worker URL not found. Please check your environment variables.');
+    throw new Error('Cloudflare Worker URL not configured. Please check your environment variables.');
   }
 
   const prompt = generateAIPrompt(answers);
@@ -53,16 +54,25 @@ export const fetchAIPlan = async (answers) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('API Error:', errorData);
-      throw new Error(`API Error: ${errorData.error || response.statusText}`);
+      const errorText = await response.text();
+      console.error('API Error:', response.status, errorText);
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
     console.log('API Response:', result);
+
+    if (!result.choices || !result.choices[0] || !result.choices[0].message) {
+      console.error('Unexpected API response structure:', result);
+      throw new Error('Unexpected API response structure');
+    }
+
     return result.choices[0].message.content;
   } catch (error) {
-    console.error('Erro ao buscar o plano alimentar da IA:', error);
-    throw new Error(`Erro ao buscar o plano alimentar: ${error.message}`);
+    console.error('Error fetching meal plan:', error);
+    if (error.message === 'Failed to fetch') {
+      throw new Error('Failed to connect to the API. Please check your internet connection and try again.');
+    }
+    throw new Error(`Error fetching meal plan: ${error.message}`);
   }
 };
