@@ -22,7 +22,7 @@ const PlanDisplay = () => {
       try {
         setLoading(true);
         setError(null);
-        const aiPlan = await fetchAIPlan(userData.prompt);
+        const aiPlan = await fetchAIPlan(userData.answers);
         setPlan(aiPlan);
       } catch (error) {
         setError(error.message);

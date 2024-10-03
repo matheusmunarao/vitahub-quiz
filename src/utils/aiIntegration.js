@@ -62,12 +62,12 @@ export const fetchAIPlan = async (answers) => {
     const result = await response.json();
     console.log('API Response:', result);
 
-    if (!result.choices || !result.choices[0] || !result.choices[0].message) {
+    if (!result[0] || !result[0].response || !result[0].response.response) {
       console.error('Unexpected API response structure:', result);
       throw new Error('Unexpected API response structure');
     }
 
-    return result.choices[0].message.content;
+    return result[0].response.response;
   } catch (error) {
     console.error('Error fetching meal plan:', error);
     if (error.message === 'Failed to fetch') {
