@@ -5,23 +5,23 @@ export const generateAIPrompt = (answers) => {
     messages: [
       {
         role: 'system',
-        content: 'You are a helpful nutritional assistant.'
+        content: 'Você é um assistente nutricional útil.'
       },
       {
         role: 'user',
-        content: `Generate a meal plan for a person with the following characteristics:
+        content: `Gere um plano alimentar para uma pessoa com as seguintes características:
 
-        Age: ${answers.age}
-        Dietary restrictions: ${answers.dietRestrictions}
-        Activity level: ${answers.activityLevel}
-        Goal: ${answers.goal}
+        Idade: ${answers.age}
+        Restrições alimentares: ${answers.dietRestrictions}
+        Nível de atividade: ${answers.activityLevel}
+        Objetivo: ${answers.goal}
 
-        The plan should include:
-        1. Meal suggestions (breakfast, lunch, dinner, and snacks)
-        2. Daily calorie and nutrient intake recommendations (proteins, carbohydrates, fats)
-        3. Food substitution suggestions if there are restrictions
+        O plano deve incluir:
+        1. Sugestões de refeições (café da manhã, almoço, jantar e lanches)
+        2. Recomendações diárias de ingestão de calorias e nutrientes (proteínas, carboidratos, gorduras)
+        3. Sugestões de substituição de alimentos se houver restrições
         
-        Please provide a detailed and personalized plan based on this information.`
+        Por favor, forneça um plano detalhado e personalizado com base nessas informações.`
       }
     ]
   };
@@ -31,39 +31,40 @@ export const fetchAIPlan = async (answers) => {
   const cloudflareWorkerUrl = appConfig.CLOUDFLARE_URL;
 
   if (!cloudflareWorkerUrl) {
-    throw new Error('Cloudflare Worker URL not found. Please check your environment variables.');
+    throw new Error('URL do Cloudflare Worker não encontrada. Verifique suas variáveis de ambiente.');
   }
 
   const prompt = generateAIPrompt(answers);
 
   try {
-    console.log('Fetching from Cloudflare Worker URL:', cloudflareWorkerUrl);
-    console.log('Sending prompt:', JSON.stringify(prompt, null, 2));
+    console.log('Fazendo requisição para:', cloudflareWorkerUrl);
+    console.log('Enviando prompt:', JSON.stringify(prompt, null, 2));
 
     const response = await fetch(cloudflareWorkerUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Origin': window.location.origin,
       },
       body: JSON.stringify(prompt),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('API Error Response:', errorText);
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      console.error('Resposta de erro da API:', errorText);
+      throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
     }
 
     const result = await response.json();
-    console.log('API Response:', JSON.stringify(result, null, 2));
+    console.log('Resposta da API:', JSON.stringify(result, null, 2));
 
     if (!result.tasks || result.tasks.length === 0 || !result.tasks[0].response) {
-      throw new Error('Invalid response format from API');
+      throw new Error('Formato de resposta inválido da API');
     }
 
     return result.tasks[0].response;
   } catch (error) {
-    console.error('Error fetching meal plan:', error);
-    throw new Error(`Error fetching meal plan: ${error.message}`);
+    console.error('Erro ao buscar plano alimentar:', error);
+    throw new Error(`Erro ao buscar plano alimentar: ${error.message}`);
   }
 };
