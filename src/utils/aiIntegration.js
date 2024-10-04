@@ -1,27 +1,41 @@
 import appConfig from '../config/appConfig';
 
 export const generateAIPrompt = (answers) => {
+  const promptContent = `
+Olá! Por favor, crie um plano alimentar personalizado para ${answers.name}, que tem ${answers.age} anos.
+
+Informações do usuário:
+- Nome: ${answers.name}
+- Idade: ${answers.age}
+- Nível de atividade física: ${answers.activityLevel}
+- Restrições alimentares: ${answers.dietRestrictions}
+- Consumo de carboidratos: ${answers.carbConsumption}
+- Consumo de proteínas: ${answers.proteinConsumption}
+- Consumo de vegetais: ${answers.vegetableConsumption}
+- Consumo de frutas: ${answers.fruitConsumption}
+- Objetivo principal: ${answers.goal}
+- Condição de saúde: ${answers.healthCondition}
+
+Por favor, forneça um plano alimentar detalhado e personalizado com base nessas informações. Inclua:
+1. Uma saudação personalizada usando o nome do usuário.
+2. Uma breve análise das informações fornecidas.
+3. Sugestões de refeições para café da manhã, almoço, jantar e lanches.
+4. Recomendações diárias de ingestão de calorias e nutrientes (proteínas, carboidratos, gorduras).
+5. Sugestões de substituição de alimentos, se houver restrições.
+6. Dicas gerais de saúde e nutrição baseadas no objetivo e condição de saúde do usuário.
+
+Por favor, formate o plano usando markdown para melhorar a legibilidade, com títulos em negrito e listas onde apropriado.
+`;
+
   return {
     messages: [
       {
         role: 'system',
-        content: 'Você é um assistente nutricional útil.'
+        content: 'Você é um assistente nutricional útil e amigável.'
       },
       {
         role: 'user',
-        content: `Gere um plano alimentar para uma pessoa com as seguintes características:
-
-        Idade: ${answers.age}
-        Restrições alimentares: ${answers.dietRestrictions}
-        Nível de atividade: ${answers.activityLevel}
-        Objetivo: ${answers.goal}
-
-        O plano deve incluir:
-        1. Sugestões de refeições (café da manhã, almoço, jantar e lanches)
-        2. Recomendações diárias de ingestão de calorias e nutrientes (proteínas, carboidratos, gorduras)
-        3. Sugestões de substituição de alimentos se houver restrições
-        
-        Por favor, forneça um plano detalhado e personalizado com base nessas informações.`
+        content: promptContent
       }
     ]
   };
@@ -58,12 +72,8 @@ export const fetchAIPlan = async (answers) => {
     const result = await response.json();
     console.log('Resposta da API:', JSON.stringify(result, null, 2));
 
-    // Acessa a primeira tarefa e verifica a estrutura da resposta
-    if (Array.isArray(result) && result.length > 0) {
-      const aiResponse = result[0].response.response; // Acesso à resposta da IA
-      return aiResponse; // Retorne a resposta
-    } else if (result && result.error) {
-      throw new Error(`Erro do Worker: ${result.error}`);
+    if (result && result.content) {
+      return formatAIResponse(result.content);
     } else {
       console.error('Formato de resposta inválido:', result);
       throw new Error('Formato de resposta inválido da API');
@@ -72,4 +82,15 @@ export const fetchAIPlan = async (answers) => {
     console.error('Erro ao buscar plano alimentar:', error);
     throw new Error(`Erro ao buscar plano alimentar: ${error.message}`);
   }
+};
+
+const formatAIResponse = (content) => {
+  // Converte markdown para HTML
+  let formattedContent = content
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>')
+    .replace(/^\s*[-*]\s(.*)$/gm, '<li>$1</li>')
+    .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>');
+
+  return formattedContent;
 };

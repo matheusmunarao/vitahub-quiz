@@ -5,9 +5,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const QuizQuestion = ({ question, onAnswer }) => {
   const [answer, setAnswer] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!answer.trim()) {
+      setError('Por favor, selecione ou digite uma resposta.');
+      return;
+    }
+    setError('');
     onAnswer(answer);
     setAnswer('');
   };
@@ -20,14 +26,13 @@ const QuizQuestion = ({ question, onAnswer }) => {
           type="text"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
-          required
           className="w-full p-2 border rounded"
         />
       )}
       {question.type === 'select' && (
-        <Select value={answer} onValueChange={setAnswer} required>
+        <Select value={answer} onValueChange={setAnswer}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select an option" />
+            <SelectValue placeholder="Selecione uma opção" />
           </SelectTrigger>
           <SelectContent>
             {question.options.map((option) => (
@@ -38,6 +43,7 @@ const QuizQuestion = ({ question, onAnswer }) => {
           </SelectContent>
         </Select>
       )}
+      {error && <p className="text-red-500">{error}</p>}
       <Button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white">
         Próxima
       </Button>

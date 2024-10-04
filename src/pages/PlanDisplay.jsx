@@ -57,7 +57,7 @@ const PlanDisplay = () => {
             </AlertDescription>
           </Alert>
         ) : (
-          <pre className="whitespace-pre-wrap font-sans text-gray-700">{plan}</pre>
+          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: plan }} />
         )}
         <div className="mt-8 flex justify-between">
           <Button onClick={() => navigate('/')} className="bg-green-500 hover:bg-green-600">
