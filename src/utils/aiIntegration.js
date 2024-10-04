@@ -23,8 +23,6 @@ Por favor, forneça um plano alimentar detalhado e personalizado com base nessas
 4. Recomendações diárias de ingestão de calorias e nutrientes (proteínas, carboidratos, gorduras).
 5. Sugestões de substituição de alimentos, se houver restrições.
 6. Dicas gerais de saúde e nutrição baseadas no objetivo e condição de saúde do usuário.
-
-Por favor, formate o plano usando markdown para melhorar a legibilidade, com títulos em negrito e listas onde apropriado.
 `;
 
   return {
