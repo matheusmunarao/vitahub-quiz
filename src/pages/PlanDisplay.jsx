@@ -46,7 +46,6 @@ const PlanDisplay = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-blue-100 p-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">Seu Plano Alimentar Personalizado</h1>
         {error ? (
           <Alert variant="destructive">
             <AlertTitle>Erro</AlertTitle>
