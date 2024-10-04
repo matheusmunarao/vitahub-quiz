@@ -76,8 +76,10 @@ export const fetchAIPlan = async (answers) => {
     const result = await response.json();
     console.log('Resposta da API:', JSON.stringify(result, null, 2));
 
-    if (result && result.content) {
-      return formatAIResponse(result.content);
+    // Verifique se a resposta é válida e acesse corretamente
+    if (Array.isArray(result) && result.length > 0) {
+      const aiResponse = result[0].response.response; // Acesso correto ao conteúdo gerado
+      return formatAIResponse(aiResponse); // Formata e retorna a resposta
     } else {
       console.error('Formato de resposta inválido:', result);
       throw new Error('Formato de resposta inválido da API');
@@ -87,6 +89,7 @@ export const fetchAIPlan = async (answers) => {
     throw new Error(`Erro ao buscar plano alimentar: ${error.message}`);
   }
 };
+
 
 const formatAIResponse = (content) => {
   // Converte markdown para HTML
