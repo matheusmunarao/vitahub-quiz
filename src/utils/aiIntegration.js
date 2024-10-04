@@ -1,29 +1,6 @@
 import appConfig from '../config/appConfig';
 
 export const generateAIPrompt = (answers) => {
-  const promptContent = `
-Olá! Por favor, crie um plano alimentar personalizado para ${answers.name}, que tem ${answers.age} anos.
-
-Informações do usuário:
-- Nome: ${answers.name}
-- Idade: ${answers.age}
-- Nível de atividade física: ${answers.activityLevel}
-- Restrições alimentares: ${answers.dietRestrictions}
-- Consumo de carboidratos: ${answers.carbConsumption}
-- Consumo de proteínas: ${answers.proteinConsumption}
-- Consumo de vegetais: ${answers.vegetableConsumption}
-- Consumo de frutas: ${answers.fruitConsumption}
-- Objetivo principal: ${answers.goal}
-- Condição de saúde: ${answers.healthCondition}
-
-Por favor, forneça um plano alimentar detalhado e personalizado com base nessas informações. Inclua:
-1. Uma saudação personalizada usando o nome do usuário.
-2. Uma breve análise das informações fornecidas.
-3. Sugestões de refeições para café da manhã, almoço, jantar e lanches.
-4. Recomendações diárias de ingestão de calorias e nutrientes (proteínas, carboidratos, gorduras).
-5. Sugestões de substituição de alimentos, se houver restrições.
-6. Dicas gerais de saúde e nutrição baseadas no objetivo e condição de saúde do usuário.
-`;
 
   return {
     messages: [
@@ -33,7 +10,29 @@ Por favor, forneça um plano alimentar detalhado e personalizado com base nessas
       },
       {
         role: 'user',
-        content: promptContent
+        content: `
+          Olá! Por favor, crie um plano alimentar personalizado para ${answers.name}, que tem ${answers.age} anos.
+          
+          Informações do usuário:
+          - Nome: ${answers.name}
+          - Idade: ${answers.age}
+          - Nível de atividade física: ${answers.activityLevel}
+          - Restrições alimentares: ${answers.dietRestrictions}
+          - Consumo de carboidratos: ${answers.carbConsumption}
+          - Consumo de proteínas: ${answers.proteinConsumption}
+          - Consumo de vegetais: ${answers.vegetableConsumption}
+          - Consumo de frutas: ${answers.fruitConsumption}
+          - Objetivo principal: ${answers.goal}
+          - Condição de saúde: ${answers.healthCondition}
+          
+          Por favor, forneça um plano alimentar detalhado e personalizado com base nessas informações. Inclua:
+          1. Uma saudação personalizada usando o nome do usuário.
+          2. Uma breve análise das informações fornecidas.
+          3. Sugestões de refeições para café da manhã, almoço, jantar e lanches.
+          4. Recomendações diárias de ingestão de calorias e nutrientes (proteínas, carboidratos, gorduras).
+          5. Sugestões de substituição de alimentos, se houver restrições.
+          6. Dicas gerais de saúde e nutrição baseadas no objetivo e condição de saúde do usuário.
+        `
       }
     ]
   };
