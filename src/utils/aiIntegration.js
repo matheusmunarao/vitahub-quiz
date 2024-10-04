@@ -12,7 +12,7 @@ export const generateAIPrompt = (answers) => {
         content: `
           Olá! Por favor, crie um plano alimentar personalizado para ${answers.name}, que tem ${answers.age} anos.
           
-          Informações do usuário:
+          Informações detalhadas do usuário:
           - Nome: ${answers.name}
           - Idade: ${answers.age}
           - Nível de atividade física: ${answers.activityLevel}
@@ -39,6 +39,8 @@ export const generateAIPrompt = (answers) => {
           - Use <p> para parágrafos de texto
           - Use <ul> e <li> para listas não ordenadas
           - Use <strong> para enfatizar informações importantes
+          
+          Certifique-se de que a formatação seja consistente e que não haja espaços excessivos entre as seções.
         `
       }
     ]
@@ -76,10 +78,9 @@ export const fetchAIPlan = async (answers) => {
     const result = await response.json();
     console.log('Resposta da API:', JSON.stringify(result, null, 2));
 
-    // Verifique se a resposta é válida e acesse corretamente
     if (Array.isArray(result) && result.length > 0) {
-      const aiResponse = result[0].response.response; // Acesso correto ao conteúdo gerado
-      return formatAIResponse(aiResponse); // Formata e retorna a resposta
+      const aiResponse = result[0].response.response;
+      return formatAIResponse(aiResponse);
     } else {
       console.error('Formato de resposta inválido:', result);
       throw new Error('Formato de resposta inválido da API');
@@ -90,10 +91,12 @@ export const fetchAIPlan = async (answers) => {
   }
 };
 
-
 const formatAIResponse = (content) => {
+  // Remove espaços em branco excessivos
+  let formattedContent = content.replace(/\s+/g, ' ').trim();
+
   // Converte markdown para HTML
-  let formattedContent = content
+  formattedContent = formattedContent
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>')
     .replace(/^\s*[-*]\s(.*)$/gm, '<li>$1</li>')
